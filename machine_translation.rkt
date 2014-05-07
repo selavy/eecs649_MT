@@ -3,13 +3,15 @@
 (require racket/trace)
 
 (define articles '(the a))
+(define conjunctions '(and))
 (define nouns '(buffalo block bird cat dog hill))
 (define adjectives '(Buffalo small big scary tall pretty))
 (define verbs '(block flies runs buffalo))
 (define prepositions '(over to up))
 
-(define DB '( ((noun buffalo) bison) ((verb buffalo) fait peur) ((adjective Buffalo) Buffalo) ((noun block) bloc) ((verb block) bloque) ((noun cat) chat) ((article the) le) ((adjective big) grand) ((adjective scary) effrayant) ((noun dog) chien) ((verb runs) court) ((preposition up) jusque à) ((noun hill) colline) ))
+(define DB '( ((conjunction and) et) ((noun buffalo) bison) ((verb buffalo) fait peur) ((adjective Buffalo) de Buffalo) ((noun block) bloc) ((verb block) bloque) ((noun cat) chat) ((article the) le) ((adjective big) grand) ((adjective scary) effrayant) ((noun dog) chien) ((verb runs) court) ((preposition up) jusque à) ((noun hill) colline) ))
 
+(define (conjunction? word) (if (member word conjunctions) #t #f))
 (define (article? word) (if (member word articles) #t #f))
 (define (noun? word) (if (member word nouns) #t #f))
 (define (adjective? word) (if (member word adjectives) #t #f))
@@ -50,7 +52,8 @@
       ((null? word) #f)
       ((noun? word) (list 'noun word))
       ((not (pair? clause)) #f)
-      ((adjective? word) (list (list 'adjective word) (adj+obj? (cdr clause))))
+      ((conjunction? word) (list (adj+obj? (cdr clause))))
+      ((adjective? word) (filter-not (λ(x) (null? x)) (list (adj+obj? (cdr clause)) (list 'adjective word) (if (noun? (cadr clause)) (list 'conjunction 'and) '()))))
       (else #f)
     )))
 
