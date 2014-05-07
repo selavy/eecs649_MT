@@ -3,13 +3,33 @@
 (require racket/trace)
 
 (define articles '(the a))
+(define adjectives '(Buffalo small big scary tall pretty))
 (define conjunctions '(and))
 (define nouns '(buffalo block bird cat dog hill))
-(define adjectives '(Buffalo small big scary tall pretty))
-(define verbs '(block flies runs buffalo))
 (define prepositions '(over to up))
+(define verbs '(block flies runs buffalo))
 
-(define DB '( ((conjunction and) et) ((noun buffalo) bison) ((verb buffalo) fait peur) ((adjective Buffalo) de Buffalo) ((noun block) bloc) ((verb block) bloque) ((noun cat) chat) ((article the) le) ((adjective big) grand) ((adjective scary) effrayant) ((noun dog) chien) ((verb runs) court) ((preposition up) jusque à) ((noun hill) colline) ))
+(define DB '( 
+             ((adjective big) gros)
+             ((adjective Buffalo) de Buffalo)
+             ((adjective scary) effrayant)
+             ((adjective pretty) mignon)
+             ((adjective tall) grand)
+             ((article the) le)
+             ((article a) un)
+             ((conjunction and) et)
+             ((noun bird) oiseau)
+             ((noun buffalo) bison)
+             ((noun block) bloc)
+             ((noun cat) chat)
+             ((noun dog) chien)
+             ((noun hill) colline)
+             ((preposition up) jusque à)
+             ((verb buffalo) fait peur)  
+             ((verb block) bloque) 
+             ((verb runs) court) 
+             ((verb flies) vole)
+             ))
 
 (define (conjunction? word) (if (member word conjunctions) #t #f))
 (define (article? word) (if (member word articles) #t #f))
@@ -20,10 +40,12 @@
 
 (define (mark-up sent)
   (printf "Marking up: ~a.\n" sent)
-  (let* ([first-word (car sent)] [rest-of-sentence (cdr sent)])
+  (let* ([first-word (car sent)] [rest-of-sentence (cdr sent)] [noun-phrase+verb-phrase (noun-phrase+verb-phrase? rest-of-sentence)])
   (cond
-    ((article? first-word) (cons (list 'article first-word) (noun-phrase+verb-phrase? rest-of-sentence)))
-    ((noun-phrase+verb-phrase? sent))
+    ((article? first-word) (list (list 'article first-word) 
+                                 (append (filter     (λ(word) (eq? (car word) 'noun)) noun-phrase+verb-phrase)
+                                         (filter-not (λ(word) (eq? (car word) 'noun)) noun-phrase+verb-phrase))))
+    (noun-phrase+verb-phrase)
     (else #f))))
 
 (define (noun-phrase+verb-phrase? clause)
@@ -83,5 +105,5 @@
                       ))
                   sent)))))
 
-(translate (mark-up '(Buffalo buffalo buffalo the big scary dog)))
+(translate (mark-up '(the Buffalo buffalo buffalo the big scary dog)))
     
