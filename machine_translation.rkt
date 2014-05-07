@@ -3,12 +3,12 @@
 (require racket/trace)
 
 (define articles '(the a))
-(define nouns '(block bird cat dog hill))
-(define adjectives '(small big scary tall pretty))
-(define verbs '(block flies runs))
+(define nouns '(buffalo block bird cat dog hill))
+(define adjectives '(Buffalo small big scary tall pretty))
+(define verbs '(block flies runs buffalo))
 (define prepositions '(over to up))
 
-(define DB '( ((noun block) bloc) ((verb block) bloque) ((noun cat) chat) ((article the) le) ((adjective big) grand) ((adjective scary) effrayant) ((noun dog) chien) ((verb runs) court) ((preposition up) jusque à) ((noun hill) colline) ))
+(define DB '( ((noun buffalo) bison) ((verb buffalo) fait peur) ((adjective Buffalo) Buffalo) ((noun block) bloc) ((verb block) bloque) ((noun cat) chat) ((article the) le) ((adjective big) grand) ((adjective scary) effrayant) ((noun dog) chien) ((verb runs) court) ((preposition up) jusque à) ((noun hill) colline) ))
 
 (define (article? word) (if (member word articles) #t #f))
 (define (noun? word) (if (member word nouns) #t #f))
@@ -21,7 +21,7 @@
   (let* ([first-word (car sent)] [rest-of-sentence (cdr sent)])
   (cond
     ((article? first-word) (cons (list 'article first-word) (noun-phrase+verb-phrase? rest-of-sentence)))
-    ((noun-phrase+verb-phrase? rest-of-sentence))
+    ((noun-phrase+verb-phrase? sent))
     (else #f))))
 
 (define (noun-phrase+verb-phrase? clause)
@@ -80,5 +80,5 @@
                       ))
                   sent)))))
 
-(translate (mark-up '(the big block block the big scary dog)))
+(translate (mark-up '(Buffalo buffalo buffalo the big scary dog)))
     
